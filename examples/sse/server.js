@@ -21,7 +21,6 @@
 		client.initialize();
 		client.onClose(function() {
 			clients.splice(clients.indexOf(this), 1);
-			console.log('no. of clients after removal: ', clients.length);
 		});
 		clients.push(client);
 	}
