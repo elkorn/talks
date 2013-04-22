@@ -7,15 +7,18 @@ Presentation plan
 ===
 1. Introduction to HTTP, request/response model
 2. Realtime communication - intro
-    a) what's it all about
-    b) what's it for
-    c) creative use cases
-3. Means of implementing RT comm (theory slides + practical example + codeshow)
-    a) long polling
-    b) server-sent events
-    c) websockets
-    d) a word about forever frames / gifsockets
+     - what's it all about
+     - what's it for
+     - creative use cases
+3. Means of implementing RT comm (theory slides -> practical example -> codeshow)
+     - long polling
+     - server-sent events
+     - websockets
+     - a word about forever frames / gifsockets
+     - WebRTC  
 4. Summary
 5. Q&A
 
 The plan may be subject to change.
+
+__WebRTC is still not commited, due to webcam driver problems.__
