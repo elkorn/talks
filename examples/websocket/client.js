@@ -1,7 +1,7 @@
 (function(argument) {
-	var server = "work",
+	var server = 'websocket/work',
 		box,
-		socket = io.connect('http://localhost:8000/websocket/work');
+		socket = io.connect(['http://localhost:8000',server].join('/'));
 
 	socket.on('connect', function() {
 		hideError();
