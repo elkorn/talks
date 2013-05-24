@@ -1,7 +1,7 @@
 realtime_communication
 ======================
 
-Materials and coded examples for college presentation
+Materials and coded examples for a college presentation
 
 Presentation plan
 ===
