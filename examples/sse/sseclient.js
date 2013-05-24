@@ -1,14 +1,4 @@
 (function() {
-	function after(decoration) {
-		return function(method) {
-			return function() {
-				var result = method.apply(this, arguments);
-				decoration.apply(this, arguments);
-				return result;
-			};
-		};
-	}
-
 	function SSEClient(req, res) {
 		this.req = req;
 		this.res = res;
