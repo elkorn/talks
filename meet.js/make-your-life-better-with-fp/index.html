@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>reveal.js - The HTML Presentation Framework</title>
+
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+            document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );</script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <div class="reveal">
+        <!-- Any section element inside of this container is displayed as a slide -->
+        <div class="slides">
+            <section>
+                <h1>Hi.</h1>
+                <pre><code>                              make(your)
+                                        (life(
+                                            better(
+                                                with {
+                                                    function(al) {
+                                                        programming();
+                                                    }
+                                                }
+                                            )
+                                        )
+                                    );</code></pre>
+            </section>
+            <section>
+                <h2>What's it gonna be about</h2>
+                <ul>
+                    <li>Functional aspects of JS</li>
+                    <li>A different JS programming approach</li>
+                    <li>Higher-order functions</li>
+                    <li>Recipes, recipes, recipes...</li>
+                    <li>Wrap-up</li>
+                </ul>
+            </section>
+            <section>
+                <p>Questions? <span class="fragment">GTFO.</span></p>
+                <p class="fragment">But seriously- interrupt me anytime to ask them. :)</p>
+            </section>
+            <!-- Example of nested vertical slides -->
+            <section>
+                <section>
+                    <h2>The Wikipedia definition</h2>
+                    <blockquote>
+                        JavaScript is a prototype-based scripting language with dynamic typing and has first-class functions.
+                    </blockquote>
+                </section>
+                <section>
+                    <h2>What you should see</h2>
+                    <blockquote> <em class="fragment" style="color: yellow; font-size:200%">JavaScript</em>
+                        <span class="fragment">blablabla cookies kittens unicorns</span> <em class="fragment" style="color: #bada55; font-size:200%">dynamic typing</em>
+                        <span class="fragment">wolfenstein patrick swayze</span>
+                        <span class="fragment"><em style="color: #3f3; font-size:200%">first-class functions</em>.</span>
+                    </blockquote>
+                </section>
+                <section>
+                    <p>
+                        Having first-class functions means we can throw them around as we please.
+                    </p>
+                    <p class="fragment">And dynamic typing means that the interpreter won't complain as to what they take in or return.</p>
+                    <p class="fragment">What does that add up to?</p>
+                    <p class="fragment">
+                        JS will do what we want and how we want it to- without asking too much questions.
+                    </p>
+                </section>
+            </section>
+            <section>
+                <section>
+                    Let's start with an obligatory trivial, contrived example. :)
+                </section>
+                <section>
+                    <pre><code>// some `happiness` and `GUI` stuff accessible globally
+function handleHappiness(howHappyAmI) {
+    switch (howHappyAmI) {
+        case "very happy":
+            happiness += 2;
+            GUI.showAHappyFace();
+            break;
+        case "happy":
+            happiness += 1;
+            GUI.showAHappyFace();
+            break;
+        case "sad":
+            happiness -= 2;
+            GUI.showASadFace();
+            break;
+    }
+}</code></pre>
+                </section>
+                <section>
+                    <p>
+                        A switch is not so bad- it works, right? But we all can do better...
+                    </p>
+                    <p>right?</p>
+                    <p>How about this...</p>
+                </section>
+                <section>
+                    <pre><code>var happinessStateEffects = {
+    "very happy": function (happiness, GUI) {
+        GUI.showAHappyFace();
+        return happiness + 2;
+    },
+    "happy": function (happiness, GUI) {
+        GUI.showAHappyFace();
+        return happiness + 1;
+    },
+    "sad": function (happiness, GUI) {
+        GUI.showASadFace();
+        return happiness - 2;
+    }
+};
+
+function handleHappiness(howHappyAmI) {
+    return happinessStateEffects[howHappyAmI](happiness, GUI);
+}</code></pre>
+                </section>
+                <section>
+                    <p>Ok, how about returning a function or passing it as a param?</p>
+                    <p class="fragment">Let's also split this functionality in two to reflect the responsibilities.</p>
+                </section>
+                <section>
+                    <p>Firstly, what can be done with the happiness:</p>
+                    <pre><code>function HappinessStateEffectsFactory() { 
+    var happinessStateEffects = {
+        "very happy": function (happiness, GUI) {
+            GUI.showAHappyFace();
+            return happiness + 2;
+        },
+        "happy": function (happiness, GUI) {
+            GUI.showAHappyFace();
+            return happiness + 1;
+        },
+        "sad": function (happiness, GUI) {
+            GUI.showASadFace();
+            return happiness - 2;
+        }
+    };
+
+    this.getHappinessStateEffect = function(howHappyAmI) {
+        return happinessStateEffects[howHappyAmI];
+    };
+}
+</code></pre>
+                </section>
+                <section>
+                    <p>
+                        And then how should it be arranged to be done:
+                    </p>
+                    <pre><code>(function(happinessFactory, happiness, GUI){
+    function handleHappiness(howHappyAmI) {
+        return happinessFactory
+            .getHappinessStateEffect
+                (howHappyAmI)
+                (happiness, GUI);
+    }
+
+    window
+    .useABetterModuleSolution
+    .handleHappiness = handleHappiness;
+}(theHappinessFactory, someHappinessProvider, someGuiModule));
+</code></pre>
+                </section>
+                <section>
+                    <h2>The benefits of this approach</h2>
+                    <ul>
+                        <li class="fragment">A framework of <u>configurable</u> behaviors, representing the 'domain'</li>
+                        <li class="fragment">A set of 'plumbing' functions used to orchestrate the configurable behaviors</li>
+                        <li class="fragment">A clear division between the two</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>The benefits of this approach</h2>
+                    <ul>
+                        <li>This <em>scales</em>. In an ideal case the two aspects of behavior are orthogonal.</li>
+                        <li class="fragment">It reads more easily. Noobs like me can see almost right off the bat what's really going on if they step through the code.</li>
+                        <li class="fragment">It is much easier to debug: 
+                            <ul>
+                                <li class="fragment">
+                                    the characteristics of a bug tend to strongly point to its origin (is the domain or the plumbing screwed up?)
+                                </li>
+                                <li class="fragment">
+                                    treating values as immutable makes your head spin less when setting watches
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>FP influences in this approach</h2>
+                    <ul>
+                        <li class="fragment">Make effort to explicitly separate state from behavior (and even behavior from behavior !) like a maniac</li>
+                        <li class="fragment">Leave the frickin values alone! (don't mutate)</li>
+                        <li class="fragment">Extract every little thing you do into a function and name it- let it describe what it accomplishes<br /><em>(chapeau bas to Uncle Bob and Martin Odersky here!)</em></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>A word about mutating state</h2>
+                    <p>I'm not going to elaborate on that topic a lot - but it's implied as a rule in this presentation that we should avoid mutating state unless it's really necessary</p>
+                </section>
+                <section>
+                    <h2>A word about mutating state</h2>
+                    <p>How your code <em>should</em> be like...</p>
+                    <img class="fragment" src="imgs/3d-printer.jpg" alt="How your code should be like">
+                </section>
+                <section>
+                    <h2>A word about mutating state</h2>
+                    <p>How your code <em>is</em> like when you mutate too much:</p>
+                    <img class="fragment" src="imgs/tree-powers.gif" alt="How your code is like when you mutate too much">
+                </section>
+            </section>
+                <section>
+                    <p>The rest of this talk is going to be pure JS <em style="color:#f00">meat</em>.</p>
+                    <em class="fragment">Please don't forget about asking me questions! ;)</em>
+                </section>
+                <section>
+                    <section>
+                        <h2>Higher-order functions</h2>
+                        <p>A function returning a function. Simple as that.</p>
+                        <pre><code>function iIncreaseValues(howMuchToIncreaseIt){
+    return function thatIsHowIRoll(whatToIncrease) {
+        return whatToIncrease + howMuchToIncreaseIt;
+    };
+}</code></pre>
+                    </section>
+                    <section>
+                        <h2>Higher-order functions</h2>
+                        <p>Usage</p>
+                        <pre><code>var increaseDatByTwoPlease = iIncreaseValues(2);
+var hereYouGoBoss = increaseDatByTwoPlease(4); // 6!!! WOW!
+iIncreaseValues(2)(4); // also 6!!!</code></pre>
+                    </section>
+                    <section>
+                        <h2>Higher-order functions</h2>
+                        <p>In this case, the simplest of tools open the biggest world of opportunities.</p>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h2>Higher-order toolset embedded in JavaScript</h2>
+                        <ul>
+                            <li>
+                                <code>Array.prototype.forEach</code>
+                            </li>
+                            <li>
+                               <code>Array.prototype.map</code>
+                            </li>
+                            <li>
+                                <code>Array.prototype.filter</code>
+                            </li>
+                            <li>
+                                <code>Array.prototype.reduce</code>
+                            </li>
+                            <li>
+                                <code>Array.prototype.some</code> (homework ;))
+                            </li>
+                        </ul>
+                        <p class="fragment">These should practically be the lowest level you get with higher order functions.</p>
+                    </section>
+                    <section>
+                    <h2>Array.prototype.forEach</h2>
+                    <p>Remember the for loop?</p>
+                    <pre><code>var interestingData = [/*...*/];
+for(var i = 0, l = interestingData.length; i < l; i += 1){
+    var x1 = Math.sqrt(Math.exp(data[i]));
+    var x2 = Math.pow(Math.atan(data[i]), data[i] % 3);
+    printer.print(Math.pow(x1,x2));
+}</code></pre>
+                    </section>
+                    <section>
+                        <h2>Array.prototype.forEach</h2>
+                        <p>How about...</p>
+                        <pre><code>var interestingData = /*...*/;
+function compute(baseValue) {
+    var x1 = Math.sqrt(Math.exp(baseValue));
+    var x2 = Math.pow(Math.atan(baseValue), baseValue % 3);
+    return Math.pow(x1, x2);
+}
+
+interestingData.forEach(function(value){ printer.print(compute(value)); });</code></pre>
+                    </section>
+                    <section>
+                        <p>Not really mind-blowind, I know.</p>
+                        <p class="fragment">But it can be taken further:</p>
+                    </section>
+                    <section>
+                        <pre><code>function printComputationResult(value) { printer.print(compute(value)); }</code></pre>
+                        <p>And what this allows:</p>
+                        <pre><code>interestingData.forEach(printComputationResult); // I like this!</code></pre>
+                        <p class="fragment">Now, to me, that's expressive. I think all top-level code should be like that.</p>
+                    </section>
+                    <section>
+                        <h2>Array.prototype.map</h2>
+                        <p>It's basically a <code>forEach</code>, but it returns the values.</p>
+                        <pre><code>var computedResults = interestingData.map(function(value) { return compute(value); });
+
+function print(result) { printer.print(result); }
+computedResults.forEach(print);</code></pre>
+                    </section>
+                    <section>
+                        <p>And that leads up to...</p>
+                        <pre><code>function asComputationResult(value) { return compute(value); }
+
+
+
+interestingData.map(asComputationResult).forEach(print);</code></pre>
+                    </section>
+                    <section>
+                        <h2>Array.prototype.filter</h2>
+                        <p>It <code>map</code>s the elements of an array to boolean values based on whether they fulfill some given predicate.</p>
+                        <pre><code>var freeDays = ["sat","sun"];
+function isAWorkingDay(day) { return freeDays.indexOf(day) === -1; }
+
+["mon","tue","wed","thu","fri","sat","su"].filter(isAWorkingDay);</code></pre>
+                    </section>
+                    <section>
+                        <h2>reduce</h2>
+                        <p>Applies a function to an accumulator and each value of the array.</p>
+                        <p>The result of the function must be a single value.</p>
+                        <p>The return value is being taken as the accumulator for the next iteration.</p>
+                    </section>
+                    <section>
+                        <h2>reduce</h2>
+                        <pre><code>function add(a,b) { return a + b; }
+
+function sum(arr) { return arr.reduce(add); }
+
+function sumVariadic() { return sum([].slice.call(arguments)); }
+
+
+sum([1,3,5]); // 9
+sumVariadic(1,3,5); // 9
+                        </code></pre>
+                    </section>
+                    <section>
+                        <p>Walking through the reduction process...</p>
+                        <pre class="fragment"><code>1) add(0, 1) { return 0 + 1; }</code></pre>
+                        <pre class="fragment"><code>2) add(1, 3) { return 1 + 3; }</code></pre>
+                        <pre class="fragment"><code>3) add(4, 5) { return 4 + 5; }</code></pre>
+                    <p class="fragment"><code>reduce</code> is the mother of the higher-order toolset functions. You can do pretty much everything presented before with it- and more.</p>
+                    </section>
+                    <section>
+                        <p>These are the most basic blocks you can get.</p>
+                        <p>Let's get on to more interesting stuff.</p>
+                    </section>
+                    <section>
+                        <h2>maybe</h2>
+                        <p>Remedies the need for having <code>null</code> checks everywhere.</p>
+                        <pre><code>function maybe (fn) {
+  return function () {
+    var i;
+
+    if (arguments.length === 0) return;
+    else {
+      for (i = 0; i < arguments.length; ++i) {
+        if (arguments[i] == null || typeof(arguments[i]) === "undefined") return;
+      }
+      return fn.apply(this, arguments);
+    };
+  }
+}</code></pre>
+                    </section>
+                    <section>
+                        <h2>maybe</h2>
+                        <p>Makes your code more idiomatic, removing technical boilerplate.</p>
+                        <pre><code>function computeStupidly(a,b,c) {
+    if(a!== null && typeof(a) !== "undefined" && 
+       b!== null && typeof(b) !== "undefined" &&
+       c!== null && typeof(c) !== "undefined") {
+        console.log(a*Math.pow(b,c));
+    }
+}
+
+// it's much more concise with maybe
+var computeWisely = maybe(function(a,b,c){
+    console.log(a*Math.pow(b,c));
+});
+</code></pre>
+                    </section>
+                    <section>
+                        <h2>maybe</h2>
+                        <p>Note that this version of <code>maybe</code> will not preserve the function's arity!</p>
+                        <pre><code>var computeWisely = maybe(function(a,b,c){
+    console.log(a*Math.pow(b,c));
+});
+
+computeWisely(1,null,5); // undefined
+computeWisely(1,5); // NaN :(</code></pre>
+                        <p class="fragment">To remedy that, you'd have to use <code>toString</code> on the function and extract the number of arguments from its definition.</p>
+                    </section>
+                    <section>
+                        <h2>once</h2>
+                        <p>Makes sure that a function is executed only once.</p>
+<pre><code>function once(fn) {
+    var executed = false;
+    return function() {
+        return executed ? void 0 : ((executed = true), fn.apply(this, arguments))
+    };
+}</code></pre>
+                    </section>
+                    <section>
+                        <h2>once</h2>
+                        <p>An example - quite straightforward</p>
+                        <pre><code>function magicComputator(value) {
+    return Math.pow(Math.exp(3/value), value * Math.sqrt(3));
+}
+
+var doNotDateToComputeTwice = once(magicComputator);
+
+doNotDareToComputeTwice(3); // 180.57612295783412
+doNotDareToComputeTwice(3); // undefined</code></pre>
+                    </section>
+                    <section>
+                        <h2>once</h2>
+                        <p>There is a pitfall here- you <em>have</em> to use a named function.</p>
+                        <pre><code>once(function() { return "Uh"; }); // Uh.
+once(function() { return "Uh"; }); // Uh.</code></pre>
+                    </section>
+                    <section>
+                        <h2>once</h2>
+                        <p>The recipe can be easily modified to alleviate some of that pain by using the <code>Function.name</code> property.</p>
+                        <p class="fragment">Unfortunately, this property is not even on a JS standards track, so it's not safe to use it.</p>
+                    </section>
+                    <section>
+                        <h2>fluent</h2>
+                        <p>Make instance methods chainable.</p>
+                        <pre><code>function fluent (methodBody) {
+      return function () {
+        methodBody.apply(this, arguments);
+        return this;
+      }
+    }</code></pre>
+                    </section>
+                    <section>
+                        <h2>fluent</h2>
+                        <p>Obvious usage - relieve yourself of having to write <code>return this;</code> all the time.</p>
+                        <pre><code>function Pigeon() {}
+Pigeon.prototype = {
+    defecateOnPeople: fluent(function(){/* do something without returning `this` */}),
+    defecateSomewhereElse: fluent(function(){/* do something without returning `this` */})
+};
+
+new Pigeon()
+    .defecateOnPeople()
+    .defecateOnPeople()
+    .defecateOnPeople(); // they don't use the other method.</code></pre>
+                    </section>
+                    <section>
+                        <h2>mapWith</h2>
+                        <p>Transforms any function into a mapping, working on an array.</p>
+                        <pre><code>function mapWith (fn) {
+  return function (list) {
+    return Array.prototype.map.call(list, function (something) {
+      return fn.call(this, something);
+    });
+  };
+};</code></pre>
+                    </section>
+                    <section>
+                        <h2>mapWith</h2>
+                        <p>Remember the <code>Array.prototype.map</code> example?</p>
+                        <pre><code>function compute(baseValue) {
+    var x1 = Math.sqrt(Math.exp(baseValue));
+    var x2 = Math.pow(Math.atan(baseValue), baseValue % 3);
+    return Math.pow(x1, x2);
+}
+
+function print(value) { printer.print(value); }
+function asComputationResult(value) { return compute(value); }
+interestingData.map(asComputationResult).forEach(print);</code></pre>
+                        <p class="fragment">It could be written even more concisely now.</p>
+                        <pre class="fragment"><code>var computeAll = mapWith(compute);
+computeAll(interestingData).forEach(print);</code></pre>
+                        <p class="fragment">In practice, for me that is probably the most used 'toolset' function. It's insanely helpful. </p>
+                    </section>
+                    <section>
+                        <p>These are just a few helpers. There is a lot more.</p>
+                        <p class="fragment">To get a better idea- I recommend <a href="https://github.com/raganwald">@raganwald</a>'s excellent <a href="https://leanpub.com/javascript-allonge/read">Javascript Allongé</a> book.</p>
+                        <p class="fragment">He formalized thoughts from the book in the <a href="http://allong.es/">allong.es</a> library.</p>
+                        <p class="fragment"><a href="http://underscorejs.org/">Underscore</a>/<a href="http://lodash.com/">lodash</a> also implement similar ideas, though with a little different approach and naming.</p>
+                    </section>
+                    <section>
+                        <p>Speaking of Underscore...</p>
+                    </section>
+                </section>
+                <section>
+                    <h2>Function composition</h2>
+                    <p class="fragment">Underscore provides a <code>_.compose</code> method.</p>
+                    <p class="fragment">Function composition is another one of the simple concepts giving great power.</p>
+                    <p class="fragment">To <em>compose</em> functions means to connect them in a cascading chain, called in a specific order.</p>
+                    <pre class="fragment"><code>function a() { /*...*/ }
+function b() { /*...*/ }
+
+_.compose(a,b) === function () { return a(b()); };</code></pre>
+                    <p class="fragment">Right to Left.</p>
+                </section>
+                <section>
+                    <h2>function composition</h2>
+                    <p>I talked about explicitly separating the two behavior types earlier.</p>
+                    <p class="fragment">Function composition provides an abstraction which allows explicitly stating how should certain behaviors be orchestrated.</p>
+                    <p class="fragment">I see it as the final piece to make the aforementioned approach feasible and practical.</p>
+                    <p class="fragment">With composition, every step of the process can be made idiomatic.</p>
+                </section>
+                <section>
+                    <h2>state + behavior + orchestration</h2>
+                    <p class="fragment">Small demo.</p>
+                </section>
+                <section>
+                    <h2>wrap-up</h2>
+                    <p>Summary</p>
+                    <ul>
+                        <li class="fragment">Maintain explicit boundaries between different types of behavior.</li>
+                        <li class="fragment">Don't mutate state unless you really have to.</li>
+                        <li class="fragment">Name everything- good abstraction is king.</li>
+                        <li class="fragment">Top-level code should be idiomatic - point-free (pointles / tacit) programming</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>wrap-up</h2>
+                    <p>a list of things to look up :)</p>
+                    <ol>
+                        <li><a href="https://leanpub.com/javascript-allonge/read">JavaScript Allongé</a> - READ THIS!!!</li>
+                        <li><a href="http://effectivejs.com/">Effective JavaScript</a> by David Herman</li>
+                        <li><a href="http://functionaltalks.org/">http://functionaltalks.org/</a>, especially <a href="http://functionaltalks.org/2013/05/27/brian-lonsdorf-hey-underscore-youre-doing-it-wrong/">this talk</a> for starters</li>
+                        <li><a href="https://www.coursera.org/course/progfun">Functional programming principles in Scala</a> - an awesome course by an awesome dude</li>
+                        <li><a href="https://www.coursera.org/course/reactive">A follow-up course</a> by the same man</li>
+                        <li><a href="https://sites.google.com/site/unclebobconsultingllc/one-thing-extract-till-you-drop">Uncle Bob</a> rocking my world as always</li>
+                    </ol>
+                </section>
+            </div>
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.min.js"></script>
+        <script src="js/underscore.js"></script>
+        <script src="http://underscorejs.org/underscore.js"></script>
+        <script src="js/pipeline-domain.js"></script>
+        <script src="js/pipeline-concerns.js"></script>
+        <script src="js/pipeline-tools.js"></script>
+        <script src="js/pipeline-behavior.js"></script>
+        <script src="js/pipeline.js"></script>
+        <script>
+
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+
+                theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+                transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+                // Optional libraries used to extend on reveal.js
+                dependencies: [
+                    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+                ]
+            });
+
+        </script>
+
+</body>
+    </html>
