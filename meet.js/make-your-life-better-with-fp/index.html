@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
 
-    <title>reveal.js - The HTML Presentation Framework</title>
+    <title>Make your life better with functional programming</title>
 
     <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
     <meta name="author" content="Hakim El Hattab">
@@ -318,7 +318,9 @@ interestingData.forEach(function(value){ printer.print(compute(value)); });</cod
                     <section>
                         <h2>Array.prototype.map</h2>
                         <p>It's basically a <code>forEach</code>, but it returns the values.</p>
-                        <pre><code>var computedResults = interestingData.map(function(value) { return compute(value); });
+                        <pre><code>var computedResults = interestingData.map(function(value) {
+    return compute(value);
+});
 
 function print(result) { printer.print(result); }
 computedResults.forEach(print);</code></pre>
