@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Websocket</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap -->
+  <link href="../assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="style.css" rel="stylesheet" media="screen">
+</head>
+<body>
+  <div class="container-narrow">
+    <div class="parent clearfix">
+      <div class="pull-left"><h3 class="muted">Technologie Sieciowe</h3></div>
+      <div class="pull-right"><h4 class="muted h3">Komunikacja w czasie rzeczywistym</h4></div>
+    </div>
+    <hr>
+    <h1 class="title">Websocket</h1>
+    <div id="disco_error" class="alert alert-error">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      Disconnected from server.
+    </div>
+    <div class="row-fluid box-container">
+      <div class="moving-box">
+        <div class="front"></div>
+        <div class="back"></div>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/jquery.min.js"></script>
+  <script src="../assets/jquery-ui-1.10.2.custom.min.js"></script>
+  <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+  <script src="../assets/node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.js"></script>
+  <script src="client.js"></script>
+</body>
+</html> 

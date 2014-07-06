@@ -1,0 +1,96 @@
+.hilite .ft-page-content {
+    background: #dfdfdf;
+    border-radius: 10%;
+    width: 80%;
+    height: 80%;
+    margin: 5%;
+    padding: 5%;
+}
+
+.left, .right {
+    position:relative;
+    width:50%;
+}
+
+.left {
+    float:left;
+}
+
+.right {
+    float:right;
+}
+
+.top, .bottom {
+    position: absolute;
+}
+
+.top {
+    top: 0;
+}
+
+.bottom { 
+    bottom: 0;
+}
+
+.request-arrow, .response-arrow {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    opacity: 0;
+}
+
+.request-arrow {
+    -webkit-animation: send-up 1s infinite; 
+    -moz-animation: send-up  1s infinite;
+    animation: send-up 1s infinite;
+}
+
+.response-arrow {
+    -webkit-animation: send-down 1s infinite;
+    -moz-animation: send-down 1s infinite;
+    animation: send-down 1s infinite;
+    -webkit-animation-delay: 1.3s;
+    -moz-animation-delay: 1.3s;
+    animation-delay: 1.3s;
+}
+
+@-webkit-keyframes send-down {
+    0% {
+        opacity: 0;
+        top: 100px;
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    90% {
+        top: 250px;
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        top: 250px;
+    }
+}
+@-webkit-keyframes send-up {
+    0% {
+        opacity: 0;
+        top: 250px;
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    90% {
+        top: 100px;
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        top: 100px;
+    }
+}
