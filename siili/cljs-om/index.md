@@ -156,6 +156,7 @@ ReactDOM.render(
 --
 
 # Thx
+
 --
 
 ### Resources
@@ -167,7 +168,11 @@ To watch:
 - https://www.youtube.com/watch?v=G7Z_g2fnEDg (Devcards - TDD++)
 - https://www.youtube.com/watch?v=xz389Ek2eS8 (Om Next - upcoming version of Om)
 
+--
+
+### Resources
+
 To read:
 
 - Tutorials and docs are on https://github.com/omcljs/om
-- http://swannodette.github.io/2015/12/23/year-in-review/
+- Overview post http://swannodette.github.io/2015/12/23/year-in-review/
